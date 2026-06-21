@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
  * Folia-aware wrapper around {@link WorldManager} that ensures world loading,
  * creation, and unloading operations run on the correct scheduler context.
  *
- * <h3>Why this is needed</h3>
+ * <h2>Why this is needed</h2>
  * <p>Folia's regionized multithreading makes {@code Bukkit.createWorld()} and
  * {@code Bukkit.unloadWorld()} throw {@link UnsupportedOperationException} if called
  * from the wrong thread. All such calls must go through the

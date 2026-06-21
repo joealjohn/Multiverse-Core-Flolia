@@ -973,7 +973,7 @@ public final class WorldManager {
      * @return The created world.
      */
      private Attempt<World, WorldCreatorFailureReason> createBukkitWorld(WorldCreator worldCreator) {
-        if (org.mvplugins.multiverse.core.folia.FoliaDetector.isFolia() && !Bukkit.isPrimaryThread()) {
+        if (org.mvplugins.multiverse.core.folia.FoliaDetector.isFolia() && !org.mvplugins.multiverse.core.folia.FoliaDetector.isGlobalTickThread()) {
             java.util.concurrent.CompletableFuture<Attempt<World, WorldCreatorFailureReason>> future = new java.util.concurrent.CompletableFuture<>();
             org.mvplugins.multiverse.core.folia.FoliaSchedulerAdapter.runGlobalTask(
                     Bukkit.getPluginManager().getPlugin("Multiverse-Core"),
@@ -1012,7 +1012,7 @@ public final class WorldManager {
      * @return The unloaded world.
      */
     private Try<Void> unloadBukkitWorld(World world, boolean save) {
-        if (org.mvplugins.multiverse.core.folia.FoliaDetector.isFolia() && !Bukkit.isPrimaryThread()) {
+        if (org.mvplugins.multiverse.core.folia.FoliaDetector.isFolia() && !org.mvplugins.multiverse.core.folia.FoliaDetector.isGlobalTickThread()) {
             java.util.concurrent.CompletableFuture<Try<Void>> future = new java.util.concurrent.CompletableFuture<>();
             org.mvplugins.multiverse.core.folia.FoliaSchedulerAdapter.runGlobalTask(
                     Bukkit.getPluginManager().getPlugin("Multiverse-Core"),

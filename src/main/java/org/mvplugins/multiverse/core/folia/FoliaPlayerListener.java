@@ -19,7 +19,7 @@ import org.mvplugins.multiverse.core.teleportation.AsyncSafetyTeleporter;
  * Supplementary event listener that ensures player-related callbacks are dispatched
  * on the correct Folia thread context.
  *
- * <h3>Why this exists alongside {@code MVPlayerListener}</h3>
+ * <h2>Why this exists alongside {@code MVPlayerListener}</h2>
  * <p>{@code MVPlayerListener} was written for Paper/Spigot where event handlers always
  * execute on the main thread. On Folia, player events fire on the region thread that
  * owns the player's chunk. If the handler then schedules follow-up work via the legacy

@@ -18,13 +18,13 @@ import org.mvplugins.multiverse.core.world.WorldManager;
 /**
  * Handles cross-world portal events in a Folia-safe manner.
  *
- * <h3>Why vanilla portals are problematic on Folia</h3>
+ * <h2>Why vanilla portals are problematic on Folia</h2>
  * <p>Folia's regionized multithreading means that {@code PlayerPortalEvent} fires on
  * the region thread owning the portal block. If the destination world is ticking in a
  * different region (or hasn't been loaded yet), vanilla portal-link logic can read or
  * write data from another region's thread context, causing undefined behaviour or errors.</p>
  *
- * <h3>What this listener does</h3>
+ * <h2>What this listener does</h2>
  * <ol>
  *   <li>Intercepts cross-world {@code PlayerPortalEvent}s at LOW priority (before vanilla handling).</li>
  *   <li>Cancels the vanilla portal handling.</li>

@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * Folia scheduler when running on a Folia server, or falls back to the legacy
  * {@link org.bukkit.scheduler.BukkitScheduler} when running on Paper / Spigot.
  *
- * <h3>Folia scheduler routing rules</h3>
+ * <h2>Folia scheduler routing rules</h2>
  * <ul>
  *   <li>{@code runEntityTask} → {@code EntityScheduler} — tasks that touch a specific entity</li>
  *   <li>{@code runRegionTask} → {@code RegionScheduler} — tasks tied to a block/chunk location</li>

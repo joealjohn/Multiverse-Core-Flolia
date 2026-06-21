@@ -35,4 +35,21 @@ public final class FoliaDetector {
     public static boolean isFolia() {
         return IS_FOLIA;
     }
+
+    /**
+     * Checks if the current thread is the global tick thread (Folia-only).
+     * Safe to call on non-Folia servers (returns false).
+     *
+     * @return true if running on Folia and the current thread is the global tick thread
+     */
+    public static boolean isGlobalTickThread() {
+        if (!IS_FOLIA) {
+            return false;
+        }
+        try {
+            return (boolean) org.bukkit.Bukkit.class.getMethod("isGlobalTickThread").invoke(null);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
