@@ -974,6 +974,9 @@ public final class WorldManager {
      */
      private Attempt<World, WorldCreatorFailureReason> createBukkitWorld(WorldCreator worldCreator) {
         if (org.mvplugins.multiverse.core.folia.FoliaDetector.isFolia() && !org.mvplugins.multiverse.core.folia.FoliaDetector.isGlobalTickThread()) {
+            if (Bukkit.isPrimaryThread()) {
+                throw new IllegalStateException("Cannot create worlds synchronously on a region tick thread. Use FoliaWorldManager for async world operations.");
+            }
             java.util.concurrent.CompletableFuture<Attempt<World, WorldCreatorFailureReason>> future = new java.util.concurrent.CompletableFuture<>();
             org.mvplugins.multiverse.core.folia.FoliaSchedulerAdapter.runGlobalTask(
                     Bukkit.getPluginManager().getPlugin("Multiverse-Core"),
@@ -1002,7 +1005,7 @@ public final class WorldManager {
         }).fold(throwable -> Attempt.failure(WorldCreatorFailureReason.BUKKIT_CREATION_FAILED,
                         Replace.WORLD.with(worldCreator.name()),
                         Replace.ERROR.with(throwable)),
-                Attempt::success);
+                 Attempt::success);
     }
 
     /**
@@ -1013,6 +1016,9 @@ public final class WorldManager {
      */
     private Try<Void> unloadBukkitWorld(World world, boolean save) {
         if (org.mvplugins.multiverse.core.folia.FoliaDetector.isFolia() && !org.mvplugins.multiverse.core.folia.FoliaDetector.isGlobalTickThread()) {
+            if (Bukkit.isPrimaryThread()) {
+                throw new IllegalStateException("Cannot unload worlds synchronously on a region tick thread. Use FoliaWorldManager for async world operations.");
+            }
             java.util.concurrent.CompletableFuture<Try<Void>> future = new java.util.concurrent.CompletableFuture<>();
             org.mvplugins.multiverse.core.folia.FoliaSchedulerAdapter.runGlobalTask(
                     Bukkit.getPluginManager().getPlugin("Multiverse-Core"),
