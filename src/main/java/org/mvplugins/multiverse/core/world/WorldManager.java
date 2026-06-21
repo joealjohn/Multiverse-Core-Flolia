@@ -972,7 +972,20 @@ public final class WorldManager {
      * @param worldCreator  The world parameters.
      * @return The created world.
      */
-    private Attempt<World, WorldCreatorFailureReason> createBukkitWorld(WorldCreator worldCreator) {
+     private Attempt<World, WorldCreatorFailureReason> createBukkitWorld(WorldCreator worldCreator) {
+        if (org.mvplugins.multiverse.core.folia.FoliaDetector.isFolia() && !Bukkit.isPrimaryThread()) {
+            java.util.concurrent.CompletableFuture<Attempt<World, WorldCreatorFailureReason>> future = new java.util.concurrent.CompletableFuture<>();
+            org.mvplugins.multiverse.core.folia.FoliaSchedulerAdapter.runGlobalTask(
+                    Bukkit.getPluginManager().getPlugin("Multiverse-Core"),
+                    () -> future.complete(createBukkitWorldSync(worldCreator))
+            );
+            return future.join();
+        } else {
+            return createBukkitWorldSync(worldCreator);
+        }
+    }
+
+    private Attempt<World, WorldCreatorFailureReason> createBukkitWorldSync(WorldCreator worldCreator) {
         return Try.of(() -> {
             this.loadTracker.add(worldCreator.name());
             World world = worldCreator.createWorld();
@@ -999,6 +1012,19 @@ public final class WorldManager {
      * @return The unloaded world.
      */
     private Try<Void> unloadBukkitWorld(World world, boolean save) {
+        if (org.mvplugins.multiverse.core.folia.FoliaDetector.isFolia() && !Bukkit.isPrimaryThread()) {
+            java.util.concurrent.CompletableFuture<Try<Void>> future = new java.util.concurrent.CompletableFuture<>();
+            org.mvplugins.multiverse.core.folia.FoliaSchedulerAdapter.runGlobalTask(
+                    Bukkit.getPluginManager().getPlugin("Multiverse-Core"),
+                    () -> future.complete(unloadBukkitWorldSync(world, save))
+            );
+            return future.join();
+        } else {
+            return unloadBukkitWorldSync(world, save);
+        }
+    }
+
+    private Try<Void> unloadBukkitWorldSync(World world, boolean save) {
         return Try.run(() -> {
             if (world == null) {
                 return;
