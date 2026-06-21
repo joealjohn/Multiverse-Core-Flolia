@@ -77,6 +77,14 @@ Due to Folia's design, certain features behave differently or are constrained:
 1. **Portal Frames & Teleportation**: When using nether or end portals to travel between worlds, you will be teleported to the target world's spawn instead of having a portal frame linked and generated at the exact destination coordinates.
 2. **Scoreboard Integrations**: Any scoreboard features are currently limited/disabled due to Folia's API constraints.
 3. **Delay Ticks**: While tick-based tasks are precise on region threads, async tasks with tick delays are converted to millisecond delays (`ticks * 50ms`) on Folia's async scheduler.
+4. **Dynamic World Loading & Creation**: Folia does not support dynamic (runtime) world creation or loading (refer to PaperMC/Folia Issue #134). The core `Bukkit.createWorld()` and `WorldCreator` APIs are disabled at runtime and throw an `UnsupportedOperationException`. Consequently, runtime commands like `/mv import`, `/mv create`, or `/mv load` (for unloaded worlds) will fail.
+   * **Workaround**: You must declare your custom worlds in the server's `bukkit.yml` under the `worlds:` block so they are loaded by the server at startup:
+     ```yaml
+     worlds:
+       Parkour:
+         generator: VoidGen # (Optional: specify if using a custom generator)
+     ```
+     Once loaded during server startup, Multiverse-Core will automatically detect, register, and manage these worlds without any issues.
 
 ---
 
