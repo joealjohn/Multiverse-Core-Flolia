@@ -47,7 +47,7 @@ public final class FoliaDetector {
             return false;
         }
         try {
-            return (boolean) org.bukkit.Bukkit.class.getMethod("isGlobalTickThread").invoke(null);
+            return (boolean) org.bukkit.Server.class.getMethod("isGlobalTickThread").invoke(org.bukkit.Bukkit.getServer());
         } catch (Exception e) {
             return false;
         }

@@ -998,14 +998,27 @@ public final class WorldManager {
             Logging.fine("Bukkit created world: " + world.getName());
             return world;
         }).onFailure(exception -> {
-            Logging.severe("Failed to create bukkit world: " + worldCreator.name());
-            exception.printStackTrace();
+            if (exception instanceof UnsupportedOperationException && org.mvplugins.multiverse.core.folia.FoliaDetector.isFolia()) {
+                Logging.severe("========================================= FOLIA LIMITATION =========================================");
+                Logging.severe("Folia does not support dynamic world loading/creation via standard APIs (Folia Issue #134).");
+                Logging.severe("To load or create the world '" + worldCreator.name() + "', you must define it in your server's bukkit.yml under 'worlds:' so it is loaded at startup.");
+                Logging.severe("Once declared in bukkit.yml, Multiverse-Core will automatically detect and manage it.");
+                Logging.severe("=====================================================================================================");
+            } else {
+                Logging.severe("Failed to create bukkit world: " + worldCreator.name());
+                exception.printStackTrace();
+            }
         }).andFinally(() -> {
             this.loadTracker.remove(worldCreator.name());
-        }).fold(throwable -> Attempt.failure(WorldCreatorFailureReason.BUKKIT_CREATION_FAILED,
+        }).fold(throwable -> {
+            Throwable displayThrowable = throwable;
+            if (throwable instanceof UnsupportedOperationException && org.mvplugins.multiverse.core.folia.FoliaDetector.isFolia()) {
+                displayThrowable = new UnsupportedOperationException("Folia does not support dynamic world loading/creation. Define this world in bukkit.yml to load it at startup.");
+            }
+            return Attempt.failure(WorldCreatorFailureReason.BUKKIT_CREATION_FAILED,
                         Replace.WORLD.with(worldCreator.name()),
-                        Replace.ERROR.with(throwable)),
-                 Attempt::success);
+                        Replace.ERROR.with(displayThrowable));
+        }, Attempt::success);
     }
 
     /**
@@ -1040,6 +1053,15 @@ public final class WorldManager {
                 throwUnloadException(world);
             }
             Logging.fine("Bukkit unloaded world: " + world.getName());
+        }).onFailure(exception -> {
+            if (exception instanceof UnsupportedOperationException && org.mvplugins.multiverse.core.folia.FoliaDetector.isFolia()) {
+                Logging.severe("========================================= FOLIA LIMITATION =========================================");
+                Logging.severe("Folia does not support dynamic world loading/unloading via standard APIs (Folia Issue #134).");
+                Logging.severe("To unload the world '" + world.getName() + "', you must configure it via server properties/configs.");
+                Logging.severe("=====================================================================================================");
+            } else {
+                Logging.severe("Failed to unload bukkit world: " + world.getName());
+            }
         }).andFinally(() -> unloadTracker.remove(world.getName()));
     }
 
